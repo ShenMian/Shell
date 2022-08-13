@@ -13,6 +13,7 @@ A simple shell framework.
 ## Usage
 
 ```sh
-source "$(dirname $0)/require.sh"
-require io oo timer
+source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/path/to/import.sh"
+import io system
 ```
+
