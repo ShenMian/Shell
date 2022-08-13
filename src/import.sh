@@ -26,4 +26,3 @@ function import {
   done
 }
 
-echo $0
