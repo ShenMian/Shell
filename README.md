@@ -4,11 +4,13 @@ A simple shell framework.
 
 ## Modules
 
-| Module | Description     |
-| ------ | --------------- |
-| io     | Input/Output.   |
-| oo     | Object-oriented |
-| timer  | A timer.        |
+| Module | Description         |
+| ------ | ------------------- |
+| io     | 彩色输出.            |
+| oo     | 基于类的面向对象.    |
+| system | 获取各类系统相关信息. |
+| timer  | 计时器.             |
+| color  | 定义多种颜色.        |
 
 ## Usage
 
@@ -17,3 +19,31 @@ source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/path/to/import.sh"
 import io system
 ```
 
+## 面向对象
+
+```sh
+# 声明类
+class Timer
+  pub
+    fn start
+    # ... 公有函数 ...
+  pri
+    # ... 私有函数 ...
+  var start_time
+  # ... 私有变量 ...
+  
+# 定义构造函数(可选)
+function Timer::Timer {
+  ...
+}
+
+# 定义成员函数
+function Timer::start {
+  # 在成员函数中
+  start_time="$(date +%s.%2N)"
+}
+
+new Timer timer # 创建实例
+timer.start     # 调用成员函数
+delete timer    # 销毁实例
+```
