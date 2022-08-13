@@ -1,7 +1,6 @@
 #!/bin/bash
 
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/../src/import.sh"
-# source "$(dirname $0)/../src/import.sh"
 import io system
 
 info 'Infomation'
