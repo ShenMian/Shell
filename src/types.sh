@@ -6,4 +6,3 @@ alias boolean='declare'
 alias integer='declare -i'
 alias array='declare -a'
 alias map='declare -A'
-

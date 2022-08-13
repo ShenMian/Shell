@@ -5,9 +5,9 @@
 #       this 仅用于表示实例的 id, 成员函数可以直接通过名称调用
 
 # 声明类
-function class() {
+function class {
   [ -z "$2" ] || exit 1
-  
+
   local name="$1"
   _CUR_CLASS_NAME="$name"
   _CUR_CLASS_SIG="_CLASS_${_CUR_CLASS_NAME}"
@@ -19,30 +19,30 @@ function class() {
 _CUR_ACCESS="PUB"
 
 # 声明当前访问控制符为 public
-function pub() {
+function pub {
   _CUR_ACCESS="PUB"
 }
 
 # 声明当前访问控制符为 private
-function pri() {
+function pri {
   _CUR_ACCESS="PRI"
 }
 
 # 声明类的成员函数
-function fn() {
+function fn {
   local name="$1"
   local var_name="${_CUR_CLASS_SIG}_${_CUR_ACCESS}_FUNCS"
   eval "$var_name=\"\${$var_name}$1 \""
 }
 
 # 声明类的成员变量
-function var() {
+function var {
   local name="$1"
   local var_name="${_CUR_CLASS_SIG}_VARS"
   eval "$var_name=\"\${$var_name}$1 \""
 }
 
-function load_funcs() {
+function load_funcs {
   local class_name
   eval "class_name=\"\${_INSTANCE_${this}_TYPE}\""
   local class_sig="_CLASS_${class_name}"
@@ -50,14 +50,14 @@ function load_funcs() {
   local funcs
   eval "funcs=\"\${${class_sig}_PUB_FUNCS} \${${class_sig}_PRI_FUNCS}\""
   for func in $funcs; do
-    eval "${func}() {                 \
+    eval "function ${func} {                 \
       ${class_name}::${func} \"\$*\"; \
       return \$?
     }"
   done
 }
 
-function unload_funcs() {
+function unload_funcs {
   local class_name
   eval "class_name=\"\${_INSTANCE_${this}_TYPE}\""
   local class_sig="_CLASS_${class_name}"
@@ -69,7 +69,7 @@ function unload_funcs() {
   done
 }
 
-function load_vars() {
+function load_vars {
   local class_name
   eval "class_name=\"\${_INSTANCE_${this}_TYPE}\""
   local class_sig="_CLASS_${class_name}"
@@ -81,7 +81,7 @@ function load_vars() {
   done
 }
 
-function unload_vars() {
+function unload_vars {
   local class_name
   eval "class_name=\"\${_INSTANCE_${this}_TYPE}\""
   local class_sig="_CLASS_${class_name}"
@@ -94,7 +94,7 @@ function unload_vars() {
 }
 
 # 创建类的实例
-function new() {
+function new {
   local class_name="$1"
   local var_name="$2"
 
@@ -107,16 +107,16 @@ function new() {
   local funcs
   eval "funcs=\"\$${class_sig}_PUB_FUNCS\""
   for func in $funcs; do
-    eval "${var_name}.${func}() {     \
-      local store_this=\"\$this\";    \
-      this=$id;                       \
-      load_vars;                      \
-      load_funcs;                     \
-      ${class_name}::${func} \"\$*\"; \
-      local ret=\$?;                  \
-      unload_funcs;                   \
-      unload_vars;                    \
-      this=\"\$store_this\";          \
+    eval "function ${var_name}.${func} { \
+      local store_this=\"\$this\";       \
+      load_vars;                         \
+      this=$id;                          \
+      load_funcs;                        \
+      ${class_name}::${func} \"\$*\";    \
+      local ret=\$?;                     \
+      unload_funcs;                      \
+      unload_vars;                       \
+      this=\"\$store_this\";             \
       return \$ret
     }"
   done
@@ -127,7 +127,7 @@ function new() {
   [[ $(type -t ${var_name}.${class_name}) == function ]] && eval "${var_name}.${class_name} \"\$*\" || true"
 }
 
-function delete() {
+function delete {
   local var_name="$1"
   local id
   eval "id=\"\${_INSTANCE_${var_name}_ID}\""

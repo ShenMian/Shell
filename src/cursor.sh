@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function cursor::get() {
+function cursor::get {
     local x
     local y
 
@@ -12,7 +12,7 @@ function cursor::get() {
     echo $x, $y
 }
 
-function cursor::set() {
+function cursor::set {
   local -i total_height=$(tput lines)
   local -i y=$1
   local -i x=$2

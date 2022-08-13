@@ -1,25 +1,23 @@
 #!/bin/bash
 
-source "$(dirname $0)/require.sh"
-require color
+import color
 
-echo_colored() {
+function echo_colored {
   printf '%b\n' "$1$2$Color_off" >&2
 }
 
-function good() {
-  echo "${Green}[✔]${Color_off} ${1}${2}"
+function info {
+  echo -e "${Blue}[➭]${Color_off} ${1}${2}"
 }
 
-function info() {
-  echo "${Blue}[➭]${Color_off} ${1}${2}"
+function good {
+  echo -e "${Green}[✔]${Color_off} ${1}${2}"
 }
 
-function error() {
-  echo "${Red}[✘]${Color_off} ${1}${2}"
-  exit 1
+function error {
+  echo -e "${Red}[✘]${Color_off} ${1}${2}"
 }
 
-function warn() {
-  echo "${Yellow}[⚠]${Color_off} ${1}${2}"
+function warn {
+  echo -e "${Yellow}[⚠]${Color_off} ${1}${2}"
 }
