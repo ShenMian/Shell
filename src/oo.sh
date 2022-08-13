@@ -1,6 +1,8 @@
 #!/bin/bash
-# 灵感来源: http://lab.madscience.nl/oo.sh.txt
 
+import io
+
+# 灵感来源: http://lab.madscience.nl/oo.sh.txt
 # 注意: 调用成员函数时, 以该类的其他成员为名的函数和变量和会被重定义
 #       this 仅用于表示实例的 id, 成员函数可以直接通过名称调用
 
@@ -107,6 +109,7 @@ function new {
   local funcs
   eval "funcs=\"\$${class_sig}_PUB_FUNCS\""
   for func in $funcs; do
+    [[ $(type -t ${class_name}::${func}) == function ]] || warn "oo: function '${class_name}::${func}' does not exist"
     eval "function ${var_name}.${func} { \
       local store_this=\"\$this\";       \
       load_vars;                         \
