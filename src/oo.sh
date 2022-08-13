@@ -99,6 +99,8 @@ function unload_vars {
 function new {
   local class_name="$1"
   local var_name="$2"
+  shift
+  shift
 
   eval "[ -n \"\${_INSTANCE_${var_name}_ID+x}\" ]" && {
     error "Can not create two instances have same name at same time"
@@ -129,18 +131,20 @@ function new {
     }"
   done
 
-  shift
-  shift
   # 调用构造函数(如果存在)
   [[ $(type -t ${var_name}.${class_name}) == function ]] && eval "${var_name}.${class_name} \"\$*\" || true"
 }
 
 function delete {
   local var_name="$1"
+  shift
   local id
   eval "id=\"\${_INSTANCE_${var_name}_ID}\""
   local class_name=
   eval "class_name=\"\${_INSTANCE_${id}_TYPE}\""
+  
+  # 调用析构函数(如果存在)
+  [[ $(type -t ${var_name}.-${class_name}) == function ]] && eval "${var_name}.-${class_name} \"\$*\" || true"
 
   # 删除函数钩子
   local class_sig="_CLASS_${class_name}"
@@ -150,6 +154,7 @@ function delete {
     unset -f ${var_name}.${func}
   done
   unset -f ${var_name}.${class_name}
+  unset -f ${var_name}.-${class_name}
 
   # 删除成员变量
   local vars

@@ -25,6 +25,8 @@ import io system
 # 声明类
 class Timer
   pub
+    fn Timer  # 构造函数(可选)
+    fn -Timer # 析构函数(可选)
     fn start
     fn getSeconds
     # ... 公有函数 ...
@@ -32,15 +34,10 @@ class Timer
     # ... 私有函数 ...
   var start_time
   # ... 私有变量 ...
-  
-# 定义构造函数(可选)
-function Timer::Timer {
-  ...
-}
 
 # 定义成员函数
 function Timer::start {
-  # 在成员函数中
+  # 在成员函数中可以直接通过名称访问成员变量和成员函数
   start_time="$(date +%s.%2N)"
 }
 
