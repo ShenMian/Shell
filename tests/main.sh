@@ -1,7 +1,9 @@
 #!/bin/bash
 
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/../src/import.sh"
-import io system
+import io system timer
+
+new Timer timer
 
 info 'Infomation'
 good 'Good'
@@ -17,3 +19,6 @@ echo "\`-Cores: $(get_cpu_num)"
 echo "USB 001"
 echo "|-Version:        $(get_usb_ver 001)"
 echo "\`-Devices number: $(get_usb_device_num 001)"
+
+echo "Elapse: $(timer.getSeconds)"
+delete timer
