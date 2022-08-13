@@ -1,6 +1,6 @@
 #!/bin/bash
 
-import io
+import io system
 
 # 灵感来源: http://lab.madscience.nl/oo.sh.txt
 # 注意: 调用成员函数时, 以该类的其他成员为名的函数和变量和会被重定义
@@ -100,6 +100,11 @@ function new {
   local class_name="$1"
   local var_name="$2"
 
+  eval "[ -n \"\${_INSTANCE_${var_name}_ID+x}\" ]" && {
+    error "Can not create two instances have same name at same time"
+    exit 1
+  }
+
   local id=$(uuidgen | tr A-F a-f | sed -e "s/-//g")
   eval _INSTANCE_${id}_TYPE="$class_name"
   eval _INSTANCE_${var_name}_ID="$id"
@@ -156,3 +161,5 @@ function delete {
   unset _INSTANCE_${var_name}_ID
   unset _INSTANCE_${id}_TYPE
 }
+
+require uuidgen
