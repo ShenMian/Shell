@@ -1,7 +1,6 @@
 #!/bin/bash
 
-source "$(dirname $0)/require.sh"
-require oo
+import oo
 
 class Timer
     fn Timer
@@ -9,15 +8,15 @@ class Timer
     fn print
     var start_time
 
-Timer::Timer() {
+function Timer::Timer {
     echo hi
 }
 
-Timer::start() {
+function Timer::start {
     start_time=$(date +%s.%2N)
 }
 
-Timer::print() {
+function Timer::print {
     local elapse=$(echo "$(date +%s.%2N) - $start_time" | bc)
     echo $elapse
 }
