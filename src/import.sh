@@ -10,19 +10,23 @@ function import_from_http {
   fi
 }
 
-function import {
-  for path in "$@"; do
+function import_once {
     local local_path="$(cd "${BASH_SOURCE[1]%/*}" && pwd)"
     if [[ -f "$local_path/$path" ]]; then
       source $local_path/$path
-      continue
+      return 0
     fi
     if [[ -f "$local_path/${path}.sh" ]]; then
       source $local_path/${path}.sh
-      continue
+      return 0
     fi
     echo "Failed to import module '$path'."
     return 1
-  done
+} 
+
+function import {
+    for path in "$@"; do
+        import_once $path || exit 1
+    done
 }
 
