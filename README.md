@@ -26,6 +26,7 @@ import io system
 class Timer
   pub
     fn start
+    fn getSeconds
     # ... 公有函数 ...
   pri
     # ... 私有函数 ...
@@ -43,7 +44,8 @@ function Timer::start {
   start_time="$(date +%s.%2N)"
 }
 
-new Timer timer # 创建实例
-timer.start     # 调用成员函数
-delete timer    # 销毁实例
+new Timer timer                     # 创建实例
+timer.start                         # 调用成员函数
+echo "Time: $(timer.getSeconds)sec" # 获取成员函数返回值
+delete timer                        # 销毁实例
 ```
