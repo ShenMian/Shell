@@ -34,11 +34,11 @@ function pri {
 function fn {
   local name="$1"
   local var_name="${_CUR_CLASS_SIG}_${_CUR_ACCESS}_FUNCS"
-  eval "[[ "\${${_CUR_CLASS_SIG}_PUB_FUNCS}" =~ "$name" ]]" && {
+  eval "echo \${${_CUR_CLASS_SIG}_PUB_FUNCS}" | grep -wq "$name" && {
     error 'Can not create two functions have same name'
     exit 1
   }
-  eval "[[ "\${${_CUR_CLASS_SIG}_PRI_FUNCS}" =~ "$name" ]]" && {
+  eval "echo \${${_CUR_CLASS_SIG}_PRI_FUNCS}" | grep -wq "$name" && {
     error 'Can not create two functions have same name'
     exit 1
   }
@@ -49,7 +49,7 @@ function fn {
 function var {
   local name="$1"
   local var_name="${_CUR_CLASS_SIG}_VARS"
-  eval "[[ "\${$var_name}" =~ "$name" ]]" && {
+  eval "echo \${$var_name}" | grep -wq "$name" && {
     error 'Can not create two variables have same name'
     exit 1
   }
