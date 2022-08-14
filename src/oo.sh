@@ -1,6 +1,8 @@
 #!/bin/bash
-# 灵感来源: http://lab.madscience.nl/oo.sh.txt
 
+import io system
+
+# 灵感来源: http://lab.madscience.nl/oo.sh.txt
 # 注意: 调用成员函数时, 以该类的其他成员为名的函数和变量和会被重定义
 #       this 仅用于表示实例的 id, 成员函数可以直接通过名称调用
 
@@ -32,6 +34,14 @@ function pri {
 function fn {
   local name="$1"
   local var_name="${_CUR_CLASS_SIG}_${_CUR_ACCESS}_FUNCS"
+  eval "[[ "\${${_CUR_CLASS_SIG}_PUB_FUNCS}" =~ "$name" ]]" && {
+    error 'Can not create two functions have same name'
+    exit 1
+  }
+  eval "[[ "\${${_CUR_CLASS_SIG}_PRI_FUNCS}" =~ "$name" ]]" && {
+    error 'Can not create two functions have same name'
+    exit 1
+  }
   eval "$var_name=\"\${$var_name}$1 \""
 }
 
@@ -39,6 +49,10 @@ function fn {
 function var {
   local name="$1"
   local var_name="${_CUR_CLASS_SIG}_VARS"
+  eval "[[ "\${$var_name}" =~ "$name" ]]" && {
+    error 'Can not create two variables have same name'
+    exit 1
+  }
   eval "$var_name=\"\${$var_name}$1 \""
 }
 
@@ -97,6 +111,13 @@ function unload_vars {
 function new {
   local class_name="$1"
   local var_name="$2"
+  shift
+  shift
+
+  eval "[ -n \"\${_INSTANCE_${var_name}_ID+x}\" ]" && {
+    error "Can not create two instances have same name at same time"
+    exit 1
+  }
 
   local id=$(uuidgen | tr A-F a-f | sed -e "s/-//g")
   eval _INSTANCE_${id}_TYPE="$class_name"
@@ -107,6 +128,7 @@ function new {
   local funcs
   eval "funcs=\"\$${class_sig}_PUB_FUNCS\""
   for func in $funcs; do
+    [[ $(type -t ${class_name}::${func}) == function ]] || warn "oo: function '${class_name}::${func}' does not exist"
     eval "function ${var_name}.${func} { \
       local store_this=\"\$this\";       \
       load_vars;                         \
@@ -121,18 +143,20 @@ function new {
     }"
   done
 
-  shift
-  shift
   # 调用构造函数(如果存在)
   [[ $(type -t ${var_name}.${class_name}) == function ]] && eval "${var_name}.${class_name} \"\$*\" || true"
 }
 
 function delete {
   local var_name="$1"
+  shift
   local id
   eval "id=\"\${_INSTANCE_${var_name}_ID}\""
   local class_name=
   eval "class_name=\"\${_INSTANCE_${id}_TYPE}\""
+  
+  # 调用析构函数(如果存在)
+  [[ $(type -t ${var_name}.-${class_name}) == function ]] && eval "${var_name}.-${class_name} \"\$*\" || true"
 
   # 删除函数钩子
   local class_sig="_CLASS_${class_name}"
@@ -142,6 +166,7 @@ function delete {
     unset -f ${var_name}.${func}
   done
   unset -f ${var_name}.${class_name}
+  unset -f ${var_name}.-${class_name}
 
   # 删除成员变量
   local vars
@@ -153,3 +178,5 @@ function delete {
   unset _INSTANCE_${var_name}_ID
   unset _INSTANCE_${id}_TYPE
 }
+
+require uuidgen
