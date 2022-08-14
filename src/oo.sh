@@ -35,11 +35,11 @@ function fn {
   local name="$1"
   local var_name="${_CUR_CLASS_SIG}_${_CUR_ACCESS}_FUNCS"
   eval "echo \${${_CUR_CLASS_SIG}_PUB_FUNCS}" | grep -wq "$name" && {
-    error 'Can not create two functions have same name'
+    error "Redeclaration of '$name'"
     exit 1
   }
   eval "echo \${${_CUR_CLASS_SIG}_PRI_FUNCS}" | grep -wq "$name" && {
-    error 'Can not create two functions have same name'
+    error "Redeclaration of '$name'"
     exit 1
   }
   eval "$var_name=\"\${$var_name}$1 \""
@@ -50,7 +50,7 @@ function var {
   local name="$1"
   local var_name="${_CUR_CLASS_SIG}_VARS"
   eval "echo \${$var_name}" | grep -wq "$name" && {
-    error 'Can not create two variables have same name'
+    error "Redeclaration of '$name'"
     exit 1
   }
   eval "$var_name=\"\${$var_name}$1 \""
@@ -128,7 +128,10 @@ function new {
   local funcs
   eval "funcs=\"\$${class_sig}_PUB_FUNCS\""
   for func in $funcs; do
-    [[ $(type -t ${class_name}::${func}) == function ]] || warn "oo: function '${class_name}::${func}' does not exist"
+    [[ $(type -t ${class_name}::${func}) == function ]] || {
+      error "Undefined reference to '${class_name}::${func}'"
+      exit 1
+    }
     eval "function ${var_name}.${func} { \
       local store_this=\"\$this\";       \
       load_vars;                         \
